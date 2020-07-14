@@ -50,67 +50,71 @@ female = data.frame(id= 1:N, #Unique identification
 
 
 
-for (j in 1:gen){ #Loop to simulate generations
+for (j in 1:gen){#Loop to simulate generations
+  sum_male= sum(male$mate_pair)
+  sum_female=sum(female$mate_pair)
   
-}
-sum_male= sum(male$mate_pair)
-sum_female=sum(female$mate_pair)
-
-while (sum_female>0){ #Loop simulating breeding season
-  
-  #STEP-1: Sample an individual from both sexes to mate
-  
-  m =sample(male$id,1,prob=male$mate_pair)
-  f =sample(female$id,1,prob=female$mate_pair)
-  
-  #Step-1.1: Update mating probs of the chosen pair
-  female$mate_pair[f]=0
-  male$mate_pair[m]=0
- 
-  #STEP-2: Evaluate female's mating state to establish
-  #baseline fitness
-  status=sample(c("c","d"),1,prob=c(1-fd,fd))
-  if (status=="c"){
-    fem_fit=Wc*V1
-    addon=Wc*(V2-V1)
-  }
-  else{
-    fem_fit=Wd*V0
-    addon=Wc*(V1-V0)
-  }
-  
-  #STEP-3: Sampling for EP male
-  
-  if (m>Ns){ #If social male is an NSSM
-    epc= sample(male$id,1,prob=male$mate_epc)
-    is_epc="y" 
+  while (sum_female>0){ #Loop simulating breeding season
+    
+    #STEP-1: Sample an individual from both sexes to mate
+    
+    m =sample(male$id,1,prob=male$mate_pair)
+    f =sample(female$id,1,prob=female$mate_pair)
+    
+    #Step-1.1: Update mating probs of the chosen pair
+    female$mate_pair[f]=0
+    male$mate_pair[m]=0
+    
+    #STEP-2: Evaluate female's mating state to establish
+    #baseline fitness
+    
+    status= sample(c("c","d"),1,prob=c(1-fd,fd))
+    if (status=="c"){
+      fem_fit=Wc*V1
+      addon=Wc*(V2-V1)
     }
-  else{
-    is_epc="n"
-  }
-  
-  #STEP-4: Fitness updates
-  
-  if (is_epc=="y"){ #If EPC has occured, then the fitnesses would be
-    addon= addon*(1-nd) #EPC occurs when social male is an NSSM
-    fem_fit= fem_fit + addon #Total female fitness
-    female$fit[f]=fem_fit #Fitness updated
+    else{
+      fem_fit=Wd*V0
+      addon=Wc*(V1-V0)
+    }
     
-    male$fit[epc]=fem_fit*(1-p) #EP male fitness updated: Remaining paternity offered to EP male
-    male$fit[m]=fem_fit*p #Social male fitness updated: Paternity of social male
-  }
-  
-  else{
-    addon= addon*(1-sd) #Social male is an SSM- hence no EP male
-    fem_fit= fem_fit + addon
-    female$fit[f]=fem_fit#Female fitness updated
+    #STEP-3: Sampling for EP male
     
-    male$fit[m]=fem_fit #Social male fitness updated
+    if (m>Ns){ #If social male is an NSSM
+      epc= sample(male$id,1,prob=male$mate_epc)
+      is_epc="y" 
+    }
+    else{
+      is_epc="n"
+    }
+    
+    #STEP-4: Fitness updates
+    
+    if (is_epc=="y"){ #If EPC has occured, then the fitnesses would be
+      addon= addon*(1-nd) #EPC occurs when social male is an NSSM
+      fem_fit= fem_fit + addon #Total female fitness
+      female$fit[f]=fem_fit #Fitness updated
+      
+      male$fit[epc]=fem_fit*(1-p) #EP male fitness updated: Remaining paternity offered to EP male
+      male$fit[m]=fem_fit*p #Social male fitness updated: Paternity of social male
+    }
+    
+    else{
+      addon= addon*(1-sd) #Social male is an SSM- hence no EP male
+      fem_fit= fem_fit + addon
+      female$fit[f]=fem_fit#Female fitness updated
+      
+      male$fit[m]=fem_fit #Social male fitness updated
+    }
+    a = male$md[m] #md
+    b = female$fd[f] #fd
+    c = runif(1,min=0,max=1) # No. to compare with md
+    d = runif(1,min=0,max=1) #No. to compare with fd
   }
-  a = male$md[m] #md
-  b = female$fd[f] #fd
-  c = runif(1,min=0,max=1) # No. to compare with md
-  d = runif(1,min=0,max=1) #No. to compare with fd
-}
+  sum_male= sum(male$mate_pair)
+  sum_female=sum(female$mate_pair)
+} 
+  
+
 print(female$fit)
 
