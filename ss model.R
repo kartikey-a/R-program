@@ -155,6 +155,12 @@ for (j in 1:gen){#Loop to simulate generations
   
  male$fit=rep(0) 
  female$fit= rep(0)
+ data_sd[j]= male$md[1:Ns] 
+ data_nd[j]= male$md[(Ns+1):N] 
+ data_fd[j]= female$fd 
+  if (j %% 100 ==0){ 
+    print(j)
+  }
 } #for-loop [generation] ends
 
 #RESULTS
