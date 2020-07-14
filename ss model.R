@@ -93,7 +93,7 @@ for (j in 1:gen){#Loop to simulate generations
     if (is_epc=="y"){ #If EPC has occured, then the fitnesses would be
       addon= addon*(1-nd) #EPC occurs when social male is an NSSM
       fem_fit= fem_fit + addon #Total female fitness
-      female$fit[f]=fem_fit #Fitness updated
+      female$fit[f]=fem_fit #Female fitness updated
       
       male$fit[epc]=fem_fit*(1-p) #EP male fitness updated: Remaining paternity offered to EP male
       male$fit[m]=fem_fit*p #Social male fitness updated: Paternity of social male
