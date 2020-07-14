@@ -43,13 +43,13 @@ alpha=  #Mating prob. for NSSMs
   male = rbind(ss_male,ns_male)
 
 #3. Data frame for females
+
 female = data.frame(id= 1:N, #Unique identification
                     fd =rep(fd_i),#Desertion prob.
                     mate_pair=rep(1),#Mating Prob. for pairing
                     fit=rep(0)) #Fitness
 
-
-
+ 
 for (j in 1:gen){#Loop to simulate generations
   sum_male= sum(male$mate_pair)
   sum_female=sum(female$mate_pair)
@@ -106,15 +106,56 @@ for (j in 1:gen){#Loop to simulate generations
       
       male$fit[m]=fem_fit #Social male fitness updated
     }
-    a = male$md[m] #md
-    b = female$fd[f] #fd
-    c = runif(1,min=0,max=1) # No. to compare with md
-    d = runif(1,min=0,max=1) #No. to compare with fd
+  } #while-loop[breeding season] ends
+    sum_male= sum(male$mate_pair)
+    sum_female=sum(female$mate_pair)
+
+    #Next generation: Why is the desertion prob being sampled?
+    s_next=sample(male$md[1:Ns],Ns,prob=male$fit[1:Ns],replace=TRUE) 
+    n_next=sample(male$md[(Ns+1):N],Nn ,prob=male$fit[(Ns+1):N],replace=TRUE) 
+    f_next=sample(female$fd[1:N],N,prob=female$fit[1:N],replace=TRUE) 
+    m_next=c(s_next ,n_next) 
+    male$md=m_next+rnorm(N,mean=0,sd=std_dev)
+
+    for(i in 1:N){
+      if(male$md[i]<0){ 
+        male$md[i]=0
+      }
+      else if(male$md[i]>1){
+        male$md[i]=1
+      }
+    }
+    female$fd=f_next+rnorm(N,mean=0,sd=std_dev)
+    for(i in 1:N){
+      if(female$fd[i]<0){
+        female$fd[i]=0
+      }
+      else if(female$fd[i]>1){ 
+        female$fd[i]=1 
+      } 
+    }
+   Nsm= Ns*randmut 
+   Nnm = Nn*randmut 
+   Nfm = N*randmut 
+   randmut_ss= sample(male$id[1:Ns],Nsm)
+   for (l in 1:Nsm){ 
+     male$md[randmut_ss[l]]= runif(1) 
+   }
+  randmut_ns= sample(male$id[(Ns+1):N],Nnm) 
+  for (l in 1:Nnm){
+    male$md[randmut_ns[l]]= runif(1)
   }
-  sum_male= sum(male$mate_pair)
-  sum_female=sum(female$mate_pair)
-} 
+  randmut_f= sample(female$id[1:N],Nfm) 
+  for (l in 1:Nfm){
+    female$fd[randmut_f[l]]= runif(1)
+  }
+  male$mate_pair[1:Ns]=rep(1) 
+  male$mate_pair[(Ns+1):N]=rep(alpha) 
+  female$mate_pair=rep(1)
   
+ male$fit=rep(0) 
+ female$fit= rep(0)
+} #for-loop [generation] ends
 
+#RESULTS
 print(female$fit)
-
