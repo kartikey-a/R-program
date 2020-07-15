@@ -4,7 +4,7 @@ N   = 1000 #No. of individuals of every sex in the popln
 X   = 0.4 #Fraction of males which are sexually selected
 Ns  = N*X #Sexually selected males
 Nn  = N-Ns #Non-sexually selected males
-gen = 500 #No. of generations
+gen = 1000 #No. of generations
 
 
 Wc = 3 #Eggs layed by caring females
@@ -81,7 +81,7 @@ for (j in 1:gen){#Loop to simulate generations
       male$mate_epc[m]=alpha*md
     }
     else{
-      male$mate_pair[m]=md
+      male$mate_epc[m]=md
     }
     
     #STEP-2: Evaluate female's mating state to establish
