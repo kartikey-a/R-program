@@ -114,11 +114,11 @@ for (j in 1:gen){#Loop to simulate generations
       }
       else{
       male$fit[m]=fem_fit #Social male fitness updated
-      }
-  } #while-loop[breeding season] ends
-    
+      }   
     sum_male= sum(male$mate_pair)
     sum_female=sum(female$mate_pair)
+  } #while-loop[breeding season] ends
+ 
 
     #Next generation
   
@@ -179,6 +179,6 @@ for (j in 1:gen){#Loop to simulate generations
 } #for-loop [generation] ends
 
 #RESULTS
-boxplot(data_fd[1:N,], ylim=c(0,1), border=" blue" , xlab=" gen" , main=" wc=3, wd=5, v0=0.2, v1=0.5, v2=0.8, N=10000, randmut=0.001" ,41 outline=FALSE) 
+boxplot(data_fd[1:N,], ylim=c(0,1), border=" blue" , xlab=" gen" , main=" wc=3, wd=5, v0=0.2, v1=0.5, v2=0.8, N=10000, randmut=0.001" ,outline=FALSE) 
 boxplot(data_sd[1:Ns ,], add=TRUE ,border=" green" ,ylim=c(0,1), xlab=" " , outline=FALSE) 
 boxplot(data_nd[1:(N-Ns),],add=TRUE ,border=" red" , ylim=c(0,1), xlab=" " , outline=FALSE)
