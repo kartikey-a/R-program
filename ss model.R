@@ -1,6 +1,6 @@
 #1. Parameters
 
-N   = 500 #No. of individuals of every sex in the popln
+N   = 1000 #No. of individuals of every sex in the popln
 X   = 0.4 #Fraction of males which are sexually selected
 Ns  = N*X #Sexually selected males
 Nn  = N-Ns #Non-sexually selected males
@@ -183,3 +183,15 @@ for (j in 1:gen){#Loop to simulate generations
 } #for-loop [generation] ends
 
 #RESULTS
+mean_sd=rep(0,gen) 
+mean_nd=rep(0,gen) 
+mean_fd=rep(0,gen) 
+for(z in 1:gen){ 
+  mean_sd[z]= mean(data_sd[[z]]) #i+1 is important 
+  mean_nd[z]= mean(data_nd[[z]]) 
+  mean_fd[z]= mean(data_fd[[z]])
+}
+ms=as.ts(mean_sd)
+ns=as.ts(mean_nd)
+fs=as.ts(mean_fd)
+ts.plot(ms ,ns ,fs , gpars=list(col=c( " green" , " red" ," blue" )))
