@@ -109,7 +109,6 @@ for (j in 1:gen){#Loop to simulate generations
     
     #STEP-4: Fitness updates
     
-    #If EPC has occured, then the fitnesses would be
     addon= addon*(1-md) #Fitness from the care of the social mate
     fem_fit= fem_fit + addon #Total female fitness
     female$fit[f]=female$fit[f]+fem_fit #Female fitness updated
