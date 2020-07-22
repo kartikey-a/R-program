@@ -8,7 +8,7 @@ gen = 1000 #No. of generations
 
 
 Wc = 3 #Eggs layed by caring females
-Wd = 5 #Eggs layed by a deserting female
+Wd = 10 #Eggs layed by a deserting female
 V0 = 0.1 #0 caring parents
 V1 = 0.5 #1 caring parent
 V2 = 1 #Both caring parents
@@ -18,7 +18,7 @@ p = 0.4#Paternity
 sd_i=0.5 #Initial desertion prob. for SSMs
 nd_i=0.5 #For NSSMs
 fd_i=0.5 #For females
-alpha=0.2  #Mating prob. for NSSMs
+alpha=0.8  #Mating prob. for NSSMs
 
 randmut =0.001 #0.1% 
 std_dev=0.005
@@ -94,7 +94,7 @@ for (j in 1:gen){#Loop to simulate generations
     }
     else{
       fem_fit=Wd*V0
-      addon=Wc*(V1-V0)
+      addon=Wd*(V1-V0)
     }
     
     #STEP-3: Sampling for EP male
@@ -110,7 +110,7 @@ for (j in 1:gen){#Loop to simulate generations
     #STEP-4: Fitness updates
     
     #If EPC has occured, then the fitnesses would be
-    addon= addon*(1-md) #EPC occurs when social male is an NSSM
+    addon= addon*(1-md) #Fitness from the care of the social mate
     fem_fit= fem_fit + addon #Total female fitness
     female$fit[f]=female$fit[f]+fem_fit #Female fitness updated
     
@@ -119,7 +119,7 @@ for (j in 1:gen){#Loop to simulate generations
       male$fit[m]= male$fit[m]+fem_fit*p #Social male fitness updated: Paternity of social male
     }
     else{
-      male$fit[m]=fem_fit #Social male fitness updated
+      male$fit[m]= male$fit[m]+fem_fit #Social male fitness updated
     }
     sum_male= sum(male$mate_pair)
     sum_female=sum(female$mate_pair)
