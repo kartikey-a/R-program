@@ -6,7 +6,6 @@ Ns  = N*X #Sexually selected males
 Nn  = N-Ns #Non-sexually selected males
 gen = 1000 #No. of generations
 
-
 Wc = 3 #Eggs layed by caring females
 Wd = 5 #Eggs layed by a deserting female
 V0 = 0.1 #0 caring parents
@@ -14,11 +13,10 @@ V1 = 0.5 #1 caring parent
 V2 = 1 #Both caring parents
 p = 0.4#Paternity
 
-
 sd_i=0.5 #Initial desertion prob. for SSMs
 nd_i=0.5 #For NSSMs
 fd_i=0.5 #For females
-alpha=1  #Mating prob. for NSSMs
+alpha=0.8  #Mating prob. for NSSMs
 
 randmut =0.001 #0.1% 
 std_dev=0.005
@@ -28,25 +26,27 @@ data_nd = data.frame(matrix(0, nrow = Nn ,ncol=gen))
 data_fd = data.frame(matrix(0, nrow = N,ncol=gen))
 
 #2. Data frame for male population
-#2.1 Sexually Selected Males
+  
+  #2.1 Sexually Selected Males
 
-ss_male =data.frame(id= 1:Ns, #Unique identification
+  ss_male =data.frame(id= 1:Ns, #Unique identification
                     des_m =rep(sd_i), #Desertion prob.
                     mate_pair=rep(1), #Mating Prob. for pairing
                     mate_epc=rep(1), #Mating Prob. for EPC
                     fit=rep(0)) #Fitness
 
 
-#2.2 Non-Sexually selected Males
+  #2.2 Non-Sexually selected Males
 
-ns_male =data.frame(id= (Ns+1):N, #Unique identification
+  ns_male =data.frame(id= (Ns+1):N, #Unique identification
                     des_m =rep(nd_i), #Desertion prob.
                     mate_pair=rep(alpha), #Mating Prob for pairing
                     mate_epc=rep(alpha), #Mating Prob for EPC
                     fit=rep(0)) #Fitness
-#2.3 Data frame for all males
-
-male = rbind(ss_male,ns_male)
+  
+  #2.3 Data frame for all males
+  
+  male = rbind(ss_male,ns_male)
 
 #3. Data frame for females
 
@@ -57,9 +57,9 @@ female = data.frame(id= 1:N, #Unique identification
 
 
 for (j in 1:gen){#Loop to simulate generations
+  
   sum_male= sum(male$mate_pair)
   sum_female=sum(female$mate_pair)
-  
   while (sum_female>0){ #Loop simulating breeding season
     
     #STEP-1: Sample an individual from both sexes to mate
@@ -67,64 +67,54 @@ for (j in 1:gen){#Loop to simulate generations
     m =sample(male$id,size=1,prob=male$mate_pair, replace = FALSE)
     f =sample(female$id,size=1,prob=female$mate_pair,replace = FALSE)
     
-    #STEP-1.1: Setting values of fd and md
+      #STEP-1.1: Setting values of fd and md
+      
+      fd=female$des_f[f]
+      md=male$des_m[m]
+      
+      #Step-1.2: Update mating probs of the chosen pair
+      
+      female$mate_pair[f]=0    
+      male$mate_pair[m]=0
     
-    fd=female$des_f[f]
-    md=male$des_m[m]
+      if (m>Ns){ #EPC prob of paired-up males changes
+        male$mate_epc[m]=alpha*md
+      }
+      else{
+        male$mate_epc[m]=md
+      }
     
-    #Step-1.2: Update mating probs of the chosen pair
-    
-    female$mate_pair[f]=0    
-    male$mate_pair[m]=0
-    
-    if (m>Ns){ #EPC prob of paired-up males changes
-      male$mate_epc[m]=alpha*md
-    }
-    else{
-      male$mate_epc[m]=md
-    }
-    
-    #STEP-2: Evaluate female's mating state to establish
-    #baseline fitness
+    #STEP-2: Evaluate female's mating state to establish fitness
     
     status= sample(c("c","d"),1,prob=c(1-fd,fd))
+    
     if (status=="c"){
-      fem_fit=Wc*V1
-      addon=Wc*(V2-V1)
-    }
+      fem_fit=Wc*V1+(Wc*(V2-V1)*(1-md)) #Social mate's care factor (1-md)
+      female$fit[f]=female$fit[f]+fem_fit  #Female fitness updated
+      }
+    
     else{
-      fem_fit=Wd*V0
-      addon=Wd*(V1-V0)
+      fem_fit=Wd*V0+(Wd*(V1-V0)*(1-md)) #Social mate's care factor (1-md)
+      female$fit[f]=female$fit[f]+fem_fit  #Female fitness updated
     }
     
-    #STEP-3: Sampling for EP male
+    #STEP-3: Sampling for EP male and assigning male fitnesses
     
-    if (m>Ns){ #If social male is an NSSM
+    if (m>Ns){ #If social male is an NSSM, then sampling occurs
       epc= sample(male$id,1,prob=male$mate_epc)
-      is_epc="y"
-    }
-    else{
-      is_epc="n"
-    }
-    
-    #STEP-4: Fitness updates
-    
-    addon= addon*(1-md) #Fitness from the care of the social mate
-    fem_fit= fem_fit + addon #Total female fitness
-    female$fit[f]=female$fit[f]+fem_fit #Female fitness updated
-    
-    if (is_epc=="y"){ 
       male$fit[epc]= male$fit[epc]+fem_fit*(1-p) #EP male fitness updated: Remaining paternity offered to EP male
       male$fit[m]= male$fit[m]+fem_fit*p #Social male fitness updated: Paternity of social male
     }
     else{
       male$fit[m]= male$fit[m]+fem_fit #Social male fitness updated
     }
+    
     sum_male= sum(male$mate_pair)
     sum_female=sum(female$mate_pair)
+  
   } #while-loop[breeding season] ends
   
-  #Next generation
+  #Next generation sampling
   s_next=sample(male$des_m[1:Ns],Ns,prob=male$fit[1:Ns],replace=TRUE) 
   n_next=sample(male$des_m[(Ns+1):N],Nn ,prob=male$fit[(Ns+1):N],replace=TRUE) 
   f_next=sample(female$des_f[1:N],N,prob=female$fit[1:N],replace=TRUE) 
