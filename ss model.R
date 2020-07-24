@@ -8,7 +8,7 @@ gen = 1000 #No. of generations
 
 
 Wc = 3 #Eggs layed by caring females
-Wd = 10 #Eggs layed by a deserting female
+Wd = 5 #Eggs layed by a deserting female
 V0 = 0.1 #0 caring parents
 V1 = 0.5 #1 caring parent
 V2 = 1 #Both caring parents
@@ -18,7 +18,7 @@ p = 0.4#Paternity
 sd_i=0.5 #Initial desertion prob. for SSMs
 nd_i=0.5 #For NSSMs
 fd_i=0.5 #For females
-alpha=0.8  #Mating prob. for NSSMs
+alpha=1  #Mating prob. for NSSMs
 
 randmut =0.001 #0.1% 
 std_dev=0.005
