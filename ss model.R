@@ -1,6 +1,5 @@
 #1. Parameters
-
-N   = 1000 #No. of individuals of every sex in the popln
+N   = 10000 #No. of individuals of every sex in the popln
 X   = 0.4 #Fraction of males which are sexually selected
 Ns  = N*X #Sexually selected males
 Nn  = N-Ns #Non-sexually selected males
@@ -16,7 +15,7 @@ p = 0.4#Paternity
 sd_i=0.5 #Initial desertion prob. for SSMs
 nd_i=0.5 #For NSSMs
 fd_i=0.5 #For females
-alpha=0.8  #Mating prob. for NSSMs
+alpha=1  #Mating prob. for NSSMs
 
 randmut =0.001 #0.1% 
 std_dev=0.005
@@ -72,7 +71,7 @@ for (j in 1:gen){#Loop to simulate generations
       fd=female$des_f[f]
       md=male$des_m[m]
       
-      #Step-1.2: Update mating probs of the chosen pair
+      #STEP-1.2: Update mating probs of the chosen pair
       
       female$mate_pair[f]=0    
       male$mate_pair[m]=0
@@ -183,4 +182,17 @@ for(z in 1:gen){
 ms=as.ts(mean_sd)
 ns=as.ts(mean_nd)
 fs=as.ts(mean_fd)
+
+nam=paste("N=",N,"V0=",V0, "V1=",V1,"V2=",V2,"alpha=",alpha,"p=",p,sep=" ")
+namA=paste(nam,".png",sep="")
+png(file=namA)
 ts.plot(ms ,ns ,fs , gpars=list(col=c( " green" , " red" ," blue" )))
+dev.off()
+
+nam1=paste("Boxplot",nam, sep=": ")
+nam1A=paste(nam1,".png",sep="")
+png(file=nam1A)
+boxplot(data_fd[1:N,], ylim=c(0,1), border=" blue" , xlab=" gen" , main="wc=3, wd=5, v0=0.1, v1=0.5, v2=1, alpha=1, p=0.4, N=10000, randmut=0.001" ,outline=FALSE)
+boxplot(data_sd[1:Ns ,], add=TRUE ,border=" green" ,ylim=c(0,1), xlab="" , outline=FALSE) 
+boxplot(data_nd[1:(N-Ns),],add=TRUE ,border=" red" , ylim=c(0,1), xlab="" , outline=FALSE)
+dev.off()
