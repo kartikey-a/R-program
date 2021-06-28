@@ -79,6 +79,10 @@ for (o in 1:gen){
   
   deads=split(pop,pop$alive)[["0"]]
   
+  if (deads=NULL){
+    pop=alives
+  }
+  else{
   finalfith=c(as.numeric(finalfith),split(deads,deads$quality)[[as.character(hi_g)]]$fit)
   finalcareh=c(as.numeric(finalcareh),split(deads,deads$quality)[[as.character(hi_g)]]$careh)
   
@@ -101,7 +105,7 @@ for (o in 1:gen){
   
   pop=rbind(alives,deads) #New population
   pop=pop[order(pop$id),]
-  
+  }
   if (o %% 100==0){ 
     print(o)
     a1=a2=a3=a4=c()
@@ -118,9 +122,9 @@ for (o in 1:gen){
       a4=c(a4,mean(finalfitl[((d-1)*step+1):(d*step)]))
     }
     par(mfrow=c(2,2))
-    plot(seq(length(a3)),a3,type = "l",xlab="Avg Estimate of Gens", ylab="Final fitnesses",ylim =c(0,20))
-    plot(seq(length(a1)),a1,type = "l",xlab="Avg Estimate of Gens", ylab="Final Cares(H)",ylim=c(10,60))
-    plot(seq(length(a4)),a4,type = "l",xlab="Avg Estimate of Gens", ylab="Final fitnesses",ylim =c(0,20))
-    plot(seq(length(a2)),a2,type = "l",xlab="Avg Estimate of Gens", ylab="Final Cares(L)",ylim=c(10,60))
+    plot(seq(length(a3)),a3,type = "l",xlab="Avg Estimate of Gens", ylab="Final fitnesses")#,ylim =c(0,20))
+    plot(seq(length(a1)),a1,type = "l",xlab="Avg Estimate of Gens", ylab="Final Cares(H)")#,ylim=c(10,60))
+    plot(seq(length(a4)),a4,type = "l",xlab="Avg Estimate of Gens", ylab="Final fitnesses")#,ylim =c(0,20))
+    plot(seq(length(a2)),a2,type = "l",xlab="Avg Estimate of Gens", ylab="Final Cares(L)")#,ylim=c(10,60))
   }
 }
